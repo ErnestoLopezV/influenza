@@ -1,0 +1,122 @@
+---
+title: 'Análisis de genomas de la influenza en México.'
+author: "Ernesto López Villarreal"
+date: "22/4/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r}
+install.packages("seqinr")
+install.packages("mgsub")
+```
+
+```{r}
+library("seqinr")
+library("mgsub")
+```
+
+1) Obtén las secuencias de las variantes mexicanas del virus (influenza) desde el NCBI o el buscador de virus del NCBI.
+
+```{r}
+
+influenzah1n1 <- read.fasta("h1n1.fasta")
+head(influenzah1n1)
+influenzah3n2 <- read.fasta("h3n2.fasta")
+head(influenzah3n2)
+influenzah7n3 <- read.fasta("h7n3.fasta")
+head(influenzah7n3)
+influenzab <- read.fasta("influenzab.fasta")
+head(influenzab)
+
+```
+
+2) Calcula el número de bases de cada variante.
+
+
+```{r}
+
+print("Influenza A-H1N1")
+count(influenzah1n1[[1]],1)
+
+print("Influenza A-H3N2")
+count(influenzah3n2[[1]],1)
+
+print("Influenza A-H7N3")
+count(influenzah7n3[[1]],1)
+
+print("Influenza tipo B")
+count(influenzab[[1]],1)
+
+```
+
+3) Crea una gráfica donde compares todas las variantes del virus y las bases de ADN que las componen.
+
+```{r}
+
+compara <- function(seq1, seq2, seq3, seq4){
+ par(mfrow=c(1,4))
+ barplot(table(influenzah1n1), col = 1:4, main = "Influenza A-H1N1")
+ barplot(table(influenzah3n2), col = 1:4, main = "Influenza A-H3N2")
+ barplot(table(influenzah7n3), col = 1:4, main = "Influenza A-H7N3")
+ barplot(table(influenzab), col = 1:4, main = "Influenza B")
+}
+compara(influenzah1n1, influenzah3n2, influenzah7n3, influenzab)
+
+```
+
+4) ¿Cuál es la composición de GC de cada variante?
+
+```{r}
+
+# Composición de GC de la influenza A-H1N1
+print(GC(influenzah1n1[[1]]))
+
+# Composición de GC de la influenza A-H3N2
+print(GC(influenzah3n2[[1]]))
+
+# Composición de GC de la influenza A-H7N3
+print(GC(influenzah7n3[[1]]))
+
+# Composición de GC de la influenza tipo B
+print(GC(influenzab[[1]]))
+
+```
+
+
+5) Crea las secuencias contrasentido (complementarias) de cada variante.
+
+```{r}
+
+secuencia.complemento <- function(original){
+  comp = original
+  comp = mgsub(comp[[1]],c("a","g","t","c","A","G","T","C"),c("t","c","a","g","T","C","A","G"))
+  comp = list(comp)
+  return(comp)
+}
+
+# Secuencia complementaria de la influenza A-H1N1
+secuencia.complemento(influenzah1n1)
+# Secuencia complementaria de la influenza A-H2N2
+secuencia.complemento(influenzah3n2)
+# Secuencia complementaria de la influenza A-H7N3
+secuencia.complemento(influenzah7n3)
+# Secuencia complementaria de la influenza tipo B
+secuencia.complemento(influenzab)
+
+```
+
+6) Agrega una interpretación escrita de las gráficas que integras.
+ 
+
+En las gráficas podemos observar que algo que comparten las 4 variantes de influenza es que tienen más adenina que los demás componentes, una gran propiedad principal de ella es que cuando se encuentra en la doble hélice, siempre está formando pareja con la timina de la hebra opuesta. Las otras bases del genoma podemos decir que cambian dependiendo de las variantes, como por ejemplo, en la A-H3N2 se puede observar una cantidad mayor de timina, seguido por la citosina y por último la guanina. En la variante H7N3 encontramos a su vez una mayor cantidad de guanina seguido por la timina y al terminar la citosina. Para concluir, en la variante de la influenza B se encuentra el mayor balance entre todas las bases, predominando por una pequeña cantidad la citosina, luego la timina y por útlimo la guanina.
+
+
+```{r}
+citation(package = "seqinr")
+citation(package = "mgsub")
+```
+
+
+
